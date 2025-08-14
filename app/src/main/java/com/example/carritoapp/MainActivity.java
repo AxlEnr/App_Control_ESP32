@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.*;
 import android.util.Log;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.*;
 import androidx.annotation.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final UUID CHARACTERISTIC_UUID = UUID.fromString("0000faf1-0000-1000-8000-00805f9b34fb");
 
     // UI
-    private Button btnAdelante, btnAtras, btnIzquierda, btnDerecha, btnAlto, btnLedOn, btnLedOff;
+    private Button btnAdelante, btnConnect, btnAtras, btnIzquierda, btnDerecha, btnAlto, btnLedOn, btnLedOff;
 
     // BLE
     private BluetoothAdapter bluetoothAdapter;
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         btnLedOn = findViewById(R.id.btnLedOn);
         btnLedOff = findViewById(R.id.btnLedOff);
 
-        Button btnConnect = findViewById(R.id.btnConnect);
+        btnConnect = findViewById(R.id.btnConnect);
         btnConnect.setOnClickListener(v -> connectToDevice());
 
         // Configurar listeners para los botones de control
@@ -68,7 +72,76 @@ public class MainActivity extends AppCompatActivity {
         btnAlto.setOnClickListener(v -> sendCommand("alto"));
         btnLedOn.setOnClickListener(v -> sendCommand("led_on"));
         btnLedOff.setOnClickListener(v -> sendCommand("led_off"));
+
+        btnLedOff.setVisibility(View.GONE);
+        btnLedOn.setVisibility(View.GONE);
     }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    sendCommand("adelante");
+                    Toast.makeText(this, "Xbox D-pad: ARRIBA", Toast.LENGTH_SHORT).show();
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    sendCommand("atras");
+                    Toast.makeText(this, "Xbox D-pad: ABAJO", Toast.LENGTH_SHORT).show();
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    sendCommand("izquierda");
+                    Toast.makeText(this, "Xbox D-pad: IZQUIERDA", Toast.LENGTH_SHORT).show();
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    sendCommand("derecha");
+                    Toast.makeText(this, "Xbox D-pad: DERECHA", Toast.LENGTH_SHORT).show();
+                    return true;
+                case KeyEvent.KEYCODE_BUTTON_A:
+                    sendCommand("led_on");
+                    Toast.makeText(this, "Xbox Botón A: LED ON", Toast.LENGTH_SHORT).show();
+                    return true;
+                case KeyEvent.KEYCODE_BUTTON_B:
+                    sendCommand("led_off");
+                    Toast.makeText(this, "Xbox Botón B: LED OFF", Toast.LENGTH_SHORT).show();
+                    return true;
+            }
+        } else if (event.getAction() == KeyEvent.ACTION_UP) {
+            // Cuando sueltas un botón de dirección, detener
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    sendCommand("alto");
+                    Toast.makeText(this, "Xbox D-pad: ALTO", Toast.LENGTH_SHORT).show();
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
+                event.getAction() == MotionEvent.ACTION_MOVE) {
+
+            float x = event.getAxisValue(MotionEvent.AXIS_X); // izquierda/derecha
+            float y = event.getAxisValue(MotionEvent.AXIS_Y); // arriba/abajo
+
+            if (y < -0.5) sendCommand("adelante");
+            else if (y > 0.5) sendCommand("atras");
+            else if (x < -0.5) sendCommand("izquierda");
+            else if (x > 0.5) sendCommand("derecha");
+            else sendCommand("alto");
+
+            return true;
+        }
+        return super.onGenericMotionEvent(event);
+    }
+
 
     private void checkBluetoothSupport() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -92,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isConnected) {
             showToast("Ya está conectado");
+            btnConnect.setVisibility(View.GONE);
             return;
         }
 
