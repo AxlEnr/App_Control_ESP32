@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <Button
+        android:id="@+id/btnAdelante"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adelante" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/btnIzquierda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Izquierda" />
+
+        <Button
+            android:id="@+id/btnAlto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="Alto" />
+
+        <Button
+            android:id="@+id/btnDerecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Derecha" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnAtras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Atrás"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:id="@+id/btnLedOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LED ON"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:id="@+id/btnLedOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LED OFF" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Conectar al Carrito" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
